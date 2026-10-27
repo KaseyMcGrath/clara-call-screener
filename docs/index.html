@@ -246,7 +246,7 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
 <p class="caption">Notice what she never did: confirm the name, confirm the number, or take a message. A pharmacy calling about a prescription gets the opposite treatment and lands in my inbox with a callback number.</p>
 
 <h2>What she will not do</h2>
-<p>I do security work for a living, so the interesting part of this build was threat-modeling a receptionist. Every rule below exists because I tried the attack on her first.</p>
+<p>The interesting part of this build for me was threat-modeling a receptionist. Every rule below exists because I tried the attack on her first.</p>
 <ul class="rules">
   <li><span class="no">✕</span><div><b>Volunteer the owner's name.</b> "Is this Kasey?" as an opener gets "Who's calling?" back. She only acknowledges the name after a caller has identified themselves with a real reason.</div></li>
   <li><span class="no">✕</span><div><b>Read back or confirm any number.</b> "Is this 706-555-…?" gets "I can't confirm that." A second, independent guardrail model checks every response for leaked numbers and makes her retry if one slips through.</div></li>

@@ -1,0 +1,44 @@
+{
+  "_readme": "Field definitions for the log_spam webhook tool. Build it in the ElevenLabs form view; this file documents what to enter. Replace the two Todoist IDs with your own spam-log project and section.",
+  "name": "log_spam",
+  "description": "Call this once, right before ending the call, for every unsolicited or vague caller (Step 3 or Step 4). Always call it for business loan or funding pitches.",
+  "method": "POST",
+  "url": "https://api.todoist.com/api/v1/tasks",
+  "headers": [
+    { "name": "Authorization", "type": "secret", "note": "Secret value must be: Bearer <todoist api token>. No trailing space in the header name." }
+  ],
+  "body": {
+    "format": "JSON",
+    "description": "Todoist spam log entry to create",
+    "properties": [
+      {
+        "identifier": "content",
+        "type": "string",
+        "required": true,
+        "value_type": "LLM Prompt",
+        "description": "Task title. If the caller pitched a business loan, line of credit, merchant cash advance, working capital, or funding: LOAN SPAM — <company they claimed, or 'no company given'>. Otherwise: Spam — <company they claimed, or 'no company given'>."
+      },
+      {
+        "identifier": "description",
+        "type": "string",
+        "required": true,
+        "value_type": "LLM Prompt",
+        "description": "Caller name: <name or 'not given'>. Pitch: <one sentence>. Do Not Call statement delivered: <yes or no>."
+      },
+      {
+        "identifier": "project_id",
+        "type": "string",
+        "required": true,
+        "value_type": "Constant Value",
+        "constant_value": "TODOIST_SPAM_PROJECT_ID"
+      },
+      {
+        "identifier": "section_id",
+        "type": "string",
+        "required": true,
+        "value_type": "Constant Value",
+        "constant_value": "TODOIST_SPAM_SECTION_ID"
+      }
+    ]
+  }
+}

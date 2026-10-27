@@ -1,0 +1,44 @@
+{
+  "_readme": "Field definitions for the log_message webhook tool. Build it in the ElevenLabs form view; this file documents what to enter. Replace TODOIST_INBOX_PROJECT_ID with your own Inbox project ID.",
+  "name": "log_message",
+  "description": "Call this once, right before ending the call, whenever you have taken a message from a legitimate caller (Step 2). Do not call it for spam or vague callers.",
+  "method": "POST",
+  "url": "https://api.todoist.com/api/v1/tasks",
+  "headers": [
+    { "name": "Authorization", "type": "secret", "note": "Secret value must be: Bearer <todoist api token>" }
+  ],
+  "body": {
+    "format": "JSON",
+    "description": "Todoist task to create",
+    "properties": [
+      {
+        "identifier": "content",
+        "type": "string",
+        "required": true,
+        "value_type": "LLM Prompt",
+        "description": "Task title. Format: Call back <caller name> (<company, if any>) — <reason in five words or fewer>"
+      },
+      {
+        "identifier": "description",
+        "type": "string",
+        "required": true,
+        "value_type": "LLM Prompt",
+        "description": "Full message details. Format: Callback: <number written as digits, e.g. 706-555-0142>. Best time: <time or 'not given'>. Message: <what the caller said, one or two sentences>. Taken by {{ASSISTANT_NAME}}."
+      },
+      {
+        "identifier": "project_id",
+        "type": "string",
+        "required": true,
+        "value_type": "Constant Value",
+        "constant_value": "TODOIST_INBOX_PROJECT_ID"
+      },
+      {
+        "identifier": "due_string",
+        "type": "string",
+        "required": true,
+        "value_type": "Constant Value",
+        "constant_value": "today"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+[warmly] Hi, this is {{ASSISTANT_NAME}}. I handle calls for this line. Can I ask who's calling and what it's regarding?

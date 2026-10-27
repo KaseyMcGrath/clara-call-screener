@@ -155,17 +155,17 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <p class="lede">An AI assistant that picks up when I don't, takes messages from <em>real people</em>, and tells the business-loan guys to lose the number.</p>
   <dl class="facts">
     <div><dt>Built by</dt><dd>Kasey McGrath</dd></div>
-    <div><dt>Build time</dt><dd>One evening + a morning of testing</dd></div>
+    <div><dt>Build time</dt><dd>One evening</dd></div>
     <div><dt>Running cost</dt><dd>About $7 / month</dd></div>
     <div><dt>Lines of code</dt><dd>Zero</dd></div>
   </dl>
 </header>
 
 <h2>The problem</h2>
-<p>I co-own a small tattoo shop, which means my cell number is in a dozen business registries. The result is a steady drip of "Mike from Business Capital Partners" calling about funding my business has been "pre-approved" for. Answering tells them the number is live. Not answering means my voicemail fills up with the same pitch.</p>
-<p>So I built a receptionist. Her name is Clara, she runs on a voice-agent platform, and she's firmer than I am.</p>
+<p>I co-own a small buisness, which means my cell number is in a dozen business registries. The result is a steady drip of "Mike from Business Capital Partners" calling about funding my business has been "pre-approved" for. Answering tells them the number is live. Not answering means my voicemail fills up with the same pitch.</p>
+<p>So I built a receptionist that runs on a voice-agent platform</p>
 
-<h2>How a call gets to her</h2>
+<h2>How a call gets to the agent</h2>
 <p>Nothing about my phone changed. Contacts still ring straight through. Unknown numbers are silenced, roll to "no answer," and the carrier forwards them to a cheap VoIP number that Clara answers. She talks to the caller, decides what they are, and writes the outcome into my to-do app.</p>
 
 <div class="flow">
@@ -271,7 +271,7 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <div>ElevenLabs Starter plan, 75 call-minutes</div><div class="amt">$6 / mo</div>
   <div class="total">Roughly, for a month of spam calls</div><div class="amt total">$7–8</div>
 </div>
-<p class="caption" style="margin-top:14px">The minutes are the real budget. A spam call runs 30–60 seconds, so 75 minutes is about a hundred of them. A daily call cap and a five-minute max call length keep a bad day from eating the month.</p>
+<p class="caption" style="margin-top:14px">The minutes are the real budget. A spam call runs 30–60 seconds, so 75 minutes is about a hundred of them. A daily call cap and a 120-second max call length keep a bad day from eating the month.</p>
 
 <h2>The stack</h2>
 <ul class="stack">

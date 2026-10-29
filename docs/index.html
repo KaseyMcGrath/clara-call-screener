@@ -110,6 +110,7 @@ header .eyebrow { margin-bottom: 18px; display: block; }
 .rules li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding-block: 14px; border-bottom: 1px solid var(--line); align-items: start; }
 .rules .no { font-family: var(--display); font-size: 22px; color: var(--flag); line-height: 1.2; }
 .rules b { font-weight: 600; }
+.rules.good .no { color: var(--ok); }
 
 .results { display: grid; gap: 14px; margin-block: 20px 0; }
 .result { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--caller-bubble); }
@@ -155,21 +156,21 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <p class="lede">An AI assistant that picks up when I don't, takes messages from <em>real people</em>, and tells the business-loan guys to lose the number.</p>
   <dl class="facts">
     <div><dt>Built by</dt><dd>Kasey McGrath</dd></div>
-    <div><dt>Build time</dt><dd>One evening</dd></div>
+    <div><dt>Build time</dt><dd>Two evenings</dd></div>
     <div><dt>Running cost</dt><dd>About $7 / month</dd></div>
-    <div><dt>Lines of code</dt><dd>Zero</dd></div>
+    <div><dt>Lines of code</dt><dd>Zero for Clara, ~170 for the router</dd></div>
   </dl>
 </header>
 
 <h2>The problem</h2>
-<p>I co-own a small buisness, which means my cell number is in a dozen business registries. The result is a steady drip of "Mike from Business Capital Partners" calling about funding my business has been "pre-approved" for. Answering tells them the number is live. Not answering means my voicemail fills up with the same pitch.</p>
-<p>So I built a receptionist that runs on a voice-agent platform</p>
+<p>I co-own a small business, which means my cell number is in a dozen business registries. The result is a steady drip of "Mike from Business Capital Partners" calling about funding my business has been "pre-approved" for. Answering tells them the number is live. Not answering means my voicemail fills up with the same pitch.</p>
+<p>So I built a receptionist that runs on a voice-agent platform.</p>
 
 <h2>How a call gets to the agent</h2>
-<p>Nothing about my phone changed. Contacts still ring straight through. Unknown numbers are silenced, roll to "no answer," and the carrier forwards them to a cheap VoIP number that Clara answers. She talks to the caller, decides what they are, and writes the outcome into my to-do app.</p>
+<p>Nothing about my phone changed. Contacts still ring straight through. Unknown numbers are silenced, roll to "no answer," and the carrier forwards them to a cheap VoIP number. A small router on that number checks who's calling. If it's someone in my contacts, they get a normal voicemail. Everyone else gets Clara, who talks to the caller and decides what they are. Real messages land on my phone; spam gets a hangup.</p>
 
 <div class="flow">
-<svg viewBox="0 0 680 470" role="img" aria-label="Call flow: a caller dials Kasey's cell. Contacts ring through. Unknown numbers roll to no-answer forwarding, reach a Twilio number, and are answered by Clara, an ElevenLabs agent running Claude. Legitimate callers leave a message that lands in Todoist Inbox. Spam callers get the Do Not Call statement, a hangup, and a Todoist spam-log entry.">
+<svg viewBox="0 0 680 590" role="img" aria-label="Call flow: a caller dials Kasey's cell. Contacts ring through. Unanswered and unknown calls roll to no-answer forwarding and reach a Twilio number, where a router checks the caller. Callers in her contacts get a normal voicemail, and she gets a Pushover alert with the transcript and recording. Everyone else is answered by Clara, an ElevenLabs agent running Claude. Real callers leave a message that goes to Pushover and Todoist. Spam callers get the Do Not Call statement and a hangup, and nothing is logged.">
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>
     <marker id="ah-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ok"/></marker>
@@ -188,11 +189,10 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <text x="335" y="58" text-anchor="middle" class="t-small">contacts ring through</text>
   <text x="335" y="76" text-anchor="middle" class="t-small">unknown numbers are silenced</text>
 
-  <!-- branch: contacts answered -->
   <path class="arrow arrow-ok" d="M440,36 L520,36" marker-end="url(#ah-ok)"/>
   <text x="522" y="40" class="t-ok">I pick up</text>
 
-  <!-- unanswered -> *71 -->
+  <!-- unanswered -> *71 -> Twilio -->
   <path class="arrow" d="M335,90 L335,128" marker-end="url(#ah)"/>
   <text x="345" y="112" class="t-mono">*71 no-answer forwarding</text>
 
@@ -202,33 +202,52 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
 
   <path class="arrow" d="M335,182 L335,218" marker-end="url(#ah)"/>
 
-  <rect class="box box-accent" x="190" y="220" width="290" height="76" rx="8"/>
-  <text x="335" y="247" text-anchor="middle" class="t-accent">Clara · ElevenLabs voice agent</text>
-  <text x="335" y="266" text-anchor="middle" class="t-accent" style="font-weight:400;font-size:12px">Claude Sonnet 5 · screening prompt · guardrails</text>
-  <text x="335" y="284" text-anchor="middle" class="t-accent" style="font-weight:400;font-size:12px">"Who's calling, and what's it regarding?"</text>
+  <!-- router -->
+  <rect class="box" x="220" y="220" width="230" height="56" rx="8"/>
+  <text x="335" y="243" text-anchor="middle">Router · Twilio Functions</text>
+  <text x="335" y="261" text-anchor="middle" class="t-small">is this caller in my contacts?</text>
 
-  <!-- split -->
-  <path class="arrow arrow-ok" d="M260,296 L140,350" marker-end="url(#ah-ok)"/>
-  <path class="arrow arrow-flag" d="M410,296 L530,350" marker-end="url(#ah-flag)"/>
-  <text x="150" y="322" text-anchor="end" class="t-ok">real person</text>
-  <text x="520" y="322" class="t-flag">sales / loan pitch</text>
+  <!-- contacts -> voicemail -->
+  <path class="arrow arrow-ok" d="M250,276 L130,328" marker-end="url(#ah-ok)"/>
+  <text x="170" y="296" text-anchor="end" class="t-ok">yes</text>
 
-  <rect class="box box-ok" x="20" y="352" width="240" height="56" rx="8"/>
-  <text x="140" y="375" text-anchor="middle">Takes a message</text>
-  <text x="140" y="393" text-anchor="middle" class="t-small">name, reason, callback number</text>
+  <rect class="box box-ok" x="20" y="330" width="200" height="56" rx="8"/>
+  <text x="120" y="353" text-anchor="middle">Normal voicemail</text>
+  <text x="120" y="371" text-anchor="middle" class="t-small">greeting, beep, recording</text>
 
-  <rect class="box box-flag" x="420" y="352" width="240" height="56" rx="8"/>
-  <text x="540" y="375" text-anchor="middle">Do Not Call statement</text>
-  <text x="540" y="393" text-anchor="middle" class="t-small">gives nothing, hangs up</text>
+  <path class="arrow arrow-ok" d="M120,386 L120,414" marker-end="url(#ah-ok)"/>
+  <text x="120" y="434" text-anchor="middle" class="t-mono">Pushover · high priority</text>
+  <text x="120" y="452" text-anchor="middle" class="t-mono">transcript + recording</text>
 
-  <path class="arrow arrow-ok" d="M140,408 L140,436" marker-end="url(#ah-ok)"/>
-  <path class="arrow arrow-flag" d="M540,408 L540,436" marker-end="url(#ah-flag)"/>
+  <!-- everyone else -> Clara -->
+  <path class="arrow" d="M420,276 L450,318" marker-end="url(#ah)"/>
+  <text x="446" y="296" class="t-small">no</text>
 
-  <text x="140" y="456" text-anchor="middle" class="t-mono">Todoist · Inbox, due today</text>
-  <text x="540" y="456" text-anchor="middle" class="t-mono">Todoist · spam log</text>
+  <rect class="box box-accent" x="260" y="320" width="380" height="76" rx="8"/>
+  <text x="450" y="347" text-anchor="middle" class="t-accent">Clara · ElevenLabs voice agent</text>
+  <text x="450" y="366" text-anchor="middle" class="t-accent" style="font-weight:400;font-size:12px">Claude Sonnet 5 · screening prompt · guardrails</text>
+  <text x="450" y="384" text-anchor="middle" class="t-accent" style="font-weight:400;font-size:12px">"Who's calling, and what's it regarding?"</text>
+
+  <!-- Clara split -->
+  <path class="arrow arrow-ok" d="M400,396 L340,468" marker-end="url(#ah-ok)"/>
+  <path class="arrow arrow-flag" d="M500,396 L560,468" marker-end="url(#ah-flag)"/>
+  <text x="360" y="436" text-anchor="end" class="t-ok">real person</text>
+  <text x="540" y="436" class="t-flag">sales / loan pitch</text>
+
+  <rect class="box box-ok" x="250" y="470" width="180" height="56" rx="8"/>
+  <text x="340" y="493" text-anchor="middle">Takes a message</text>
+  <text x="340" y="511" text-anchor="middle" class="t-small">name, reason, number</text>
+
+  <rect class="box box-flag" x="460" y="470" width="200" height="56" rx="8"/>
+  <text x="560" y="493" text-anchor="middle">Do Not Call statement</text>
+  <text x="560" y="511" text-anchor="middle" class="t-small">gives nothing, hangs up</text>
+
+  <path class="arrow arrow-ok" d="M340,526 L340,550" marker-end="url(#ah-ok)"/>
+  <text x="340" y="572" text-anchor="middle" class="t-mono">Pushover + Todoist Inbox</text>
+  <text x="560" y="548" text-anchor="middle" class="t-mono">nothing logged</text>
 </svg>
 </div>
-<p class="caption">The two Todoist writes are tools Clara calls herself, straight against the Todoist API. No middleware, no IFTTT, no server to run.</p>
+<p class="caption">The router is about 170 lines of JavaScript on Twilio Functions, so there's still no server of my own to run. If Clara is ever unreachable, the router falls back to a plain voicemail so nothing gets lost.</p>
 
 <h2>A real test call</h2>
 <p>This is Clara's transcript from one of my test calls, playing the loan guy. The only edit is that I fixed the speech-to-text spelling of my name.</p>
@@ -243,7 +262,7 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <div class="turn agent"><span class="who">Clara</span><div class="bubble"><span class="tag">[firmly]</span>As I said, this number is on the National Do Not Call Registry. The owner is not interested. Please remove this number and don't call again. I'll be ending the call now.</div></div>
   <div class="sys flag">log_spam → Todoist: "LOAN SPAM — Business Capital" · Agent ended the conversation · 55 s</div>
 </div>
-<p class="caption">Notice what she never did: confirm the name, confirm the number, or take a message. A pharmacy calling about a prescription gets the opposite treatment and lands in my inbox with a callback number.</p>
+<p class="caption">Notice what she never did: confirm the name, confirm the number, or take a message. A pharmacy calling about a prescription gets the opposite treatment and lands in my inbox with a callback number. (This test was from the first version, which also logged spam to Todoist. I've since dropped that; spam calls now just end.)</p>
 
 <h2>What she will not do</h2>
 <p>The interesting part of this build for me was threat-modeling a receptionist. Every rule below exists because I tried the attack on her first.</p>
@@ -264,6 +283,19 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <div class="result"><span class="pill ok">Pass</span><div><p>Cold "Is this Kasey?" → deflected. Loan pitch → Do Not Call, hung up, logged. "A debt collector" with no name → refused, hung up. Pharmacy → message in Todoist, due today, callback number in digits.</p></div></div>
 </div>
 
+<h2>Version two: a real voicemail for people I know</h2>
+<p>Clara is great with strangers, but I didn't want people I actually know talking to a robot. So I put a small router in front of her, built on Twilio Functions. When a call comes in, it checks the caller's number against my contact list. Contacts hear a normal greeting and leave a regular voicemail, and I get a push notification with the transcript and a link to listen to the recording. Everyone else goes to Clara, same as before.</p>
+<p>The first real test came from my mom. She left a message, and the transcript was on my phone about a minute later. The same day, Clara screened several unknown callers on her own.</p>
+<p>Adding code meant adding attack surface, so I locked it down:</p>
+<ul class="rules good">
+  <li><span class="no">✓</span><div><b>Signed webhooks only.</b> The functions that handle calls and voicemails reject any request that isn't signed by Twilio.</div></li>
+  <li><span class="no">✓</span><div><b>A secret on the one public endpoint.</b> Clara's message tool has to reach the router from ElevenLabs, so that endpoint is public, but it returns 401 without a shared-secret header.</div></li>
+  <li><span class="no">✓</span><div><b>No public recordings.</b> Recording links open in the Twilio Console, so listening requires my login.</div></li>
+  <li><span class="no">✓</span><div><b>Nothing sensitive in the code.</b> API keys, tokens, and my contact list live in environment variables.</div></li>
+  <li><span class="no">✓</span><div><b>Fallbacks everywhere.</b> If Clara is down, callers get a plain voicemail. If Pushover fails, the alert comes through Todoist instead.</div></li>
+</ul>
+<p style="margin-top:20px">One gap I can't close: ringless voicemail. Those drops go straight into the carrier's mailbox without ever ringing the phone, so no forwarding setup sees them.</p>
+
 <h2>What it costs</h2>
 <div class="cost">
   <div>Twilio local number, voice only</div><div class="amt">$1.15 / mo</div>
@@ -271,7 +303,7 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <div>ElevenLabs Starter plan, 75 call-minutes</div><div class="amt">$6 / mo</div>
   <div class="total">Roughly, for a month of spam calls</div><div class="amt total">$7–8</div>
 </div>
-<p class="caption" style="margin-top:14px">The minutes are the real budget. A spam call runs 30–60 seconds, so 75 minutes is about a hundred of them. A daily call cap and a 120-second max call length keep a bad day from eating the month.</p>
+<p class="caption" style="margin-top:14px">The minutes are the real budget. A spam call runs 30–60 seconds, so 75 minutes is about a hundred of them. A daily call cap and a 60-second max call length keep a bad day from eating the month.</p>
 
 <h2>The stack</h2>
 <ul class="stack">
@@ -279,17 +311,18 @@ footer { margin-top: 40px; font-size: 14px; color: var(--fg-2); }
   <li><span class="k">Forwarding</span>Verizon <code>*71</code> busy / no-answer + iPhone Silence Unknown Callers</li>
   <li><span class="k">Agent</span>ElevenLabs Agents, Claude Sonnet 5, Clara voice</li>
   <li><span class="k">Guardrails</span>Prompt-injection block, focus guardrail, custom privacy guardrail with retry</li>
-  <li><span class="k">Logging</span>Two webhook tools posting to the Todoist API</li>
+  <li><span class="k">Routing</span>Twilio Functions: contacts to voicemail, everyone else to Clara</li>
+  <li><span class="k">Alerts</span>Pushover push notifications, with Todoist for the record</li>
   <li><span class="k">Testing</span>Scripted calls from my own phone, transcripts reviewed after each change</li>
 </ul>
 
 <div class="cta">
   <h2>Want one?</h2>
-  <p>The full system prompt, the two Todoist tool definitions, and setup notes are on GitHub. Swap in your name, your carrier's forwarding code, and your own Todoist project, and you have a Clara.</p>
+  <p>The full system prompt, the Todoist tool definition, the router code, and setup notes are on GitHub. Swap in your name, your carrier's forwarding code, and your own Todoist project, and you have a Clara. The router is optional.</p>
   <p><a href="https://github.com/KaseyMcGrath/clara-call-screener">github.com/KaseyMcGrath/clara-call-screener</a></p>
 </div>
 
-<footer>Kasey McGrath · security analyst, small buisness owner, recently much harder to reach for business-loan pitches.</footer>
+<footer>Kasey McGrath · security analyst, small business owner, recently much harder to reach for business-loan pitches.</footer>
 </div>
 </body>
 </html>

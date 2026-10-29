@@ -45,7 +45,7 @@ Incoming call → your cell
    > End the call once a legitimate message has been confirmed, after the Do Not Call statement has been given twice, after the Step 3 refusal, or immediately on abuse or an emergency message.
 
    Set its Interruptions option to **Disable during whole turn** so a caller talking over the goodbye can't cancel the hangup.
-6. Settings: max conversation duration 120 s, daily call limit ~40, bursting off.
+6. Settings: max conversation duration 60 s, daily call limit ~40, bursting off.
 
 ### 3. Todoist message tool
 Add one **Webhook** tool to the agent for real messages. Build it in the form view, not the JSON editor.
